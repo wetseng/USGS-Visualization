@@ -1,37 +1,3 @@
-
-function createMap(earthquakes){
-
-    // Create the tile layer that will be the background of our map
-    var light = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-        maxZoom: 18,
-        id: "light-v10",
-        accessToken: API_KEY
-      });
-
-    // Create a baseMaps object to hold the lightmap layer
-    var baseMaps = {
-        "Light Map": light
-    };
-
-    var overlayMaps = {
-        "Earthquakes": earthquakes
-    };
-
-    // Create the map object with options
-    var map = L.map("map-id", {
-        center: [36.1699, -115.1398],
-        zoom: 12,
-        layers: [light, earthquakes]
-    });
-
-    // Create a layer control, pass in the baseMaps and overlayMaps. Add the layer control to the map
-    L.control.layers(baseMaps, overlayMaps, {
-        collapsed: false
-    }).addTo(map);
-
-}
-
 var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 
 function markerColor(mag) {
@@ -119,15 +85,41 @@ function createMap(earthquakes) {
         accessToken: API_KEY
     });
 
+    var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        maxZoom: 18,
+        id: "dark-v10",
+        accessToken: API_KEY
+    });
+
+    var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        maxZoom: 18,
+        id: "streets-v11",
+        accessToken: API_KEY
+    });
+
+    var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        maxZoom: 18,
+        id: "satellite-v9",
+        accessToken: API_KEY
+    });
+
 
     // Create a baseMaps object to hold the lightmap layer
     var baseMaps = {
         "Light Map": lightmap,
+        "Dark Map": darkmap,
+        "Street Map": streetmap,
+        "Satellite Map": satellitemap
     };
 
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
         "Earthquakes": earthquakes
+        // ,
+        // "Tectonic Plates": plates
     };
 
     // Create the map object with options
@@ -154,7 +146,7 @@ function createMap(earthquakes) {
         for (var i = 0; i < magnitudes.length; i++) {
             div.innerHTML +=
             labels.push(
-                '<i style="background:' + markerColor(magnitudes[i] + 1) + '"></i>' + magnitudes[i] + (magnitudes[i + 1] ? '-' + magnitudes[i + 1] : '+ '));
+                '<i style="background:' + markerColor(magnitudes[i] + 1) + '"></i> &nbsp' +  magnitudes[i] + (magnitudes[i + 1] ? '-' + magnitudes[i + 1] : '+ '));
             }
             div.innerHTML = labels.join('<br>');
         return div;
