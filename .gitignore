@@ -130,5 +130,5 @@ dmypy.json
 
 ./static/js/config.js
 *.config.js
-
+*config.js
 *.config.*
