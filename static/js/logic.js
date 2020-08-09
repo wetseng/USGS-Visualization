@@ -69,80 +69,88 @@ d3.json(link, function(data) {
 
 
   // Sending our earthquakes layer to the createMap function
-  createMap(earthquakes);
-
+//   createMap(earthquakes);
+    earthquakes.addTo(layers.EARTHQUAKE_L)
+    earthquake_legend(earthquakes)
 
 });
 
 
-function createMap(earthquakes) {
-
-    // Create the tile layer that will be the background of our map
-    var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-        maxZoom: 18,
-        id: "light-v10",
-        accessToken: API_KEY
-    });
-
-    var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-        maxZoom: 18,
-        id: "dark-v10",
-        accessToken: API_KEY
-    });
-
-    var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-        maxZoom: 18,
-        id: "streets-v11",
-        accessToken: API_KEY
-    });
-
-    var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-        maxZoom: 18,
-        id: "satellite-v9",
-        accessToken: API_KEY
-    });
 
 
-    // Create a baseMaps object to hold the lightmap layer
-    var baseMaps = {
-        "Light Map": lightmap,
-        "Dark Map": darkmap,
-        "Street Map": streetmap,
-        "Satellite Map": satellitemap
-    };
+// Create the tile layer that will be the background of our map
+var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    maxZoom: 18,
+    id: "light-v10",
+    accessToken: API_KEY
+});
 
-    // Create overlay object to hold our overlay layer
-    var overlayMaps = {
-        "Earthquakes": earthquakes
-        // ,
-        // "Tectonic Plates": plates
-    };
+var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    maxZoom: 18,
+    id: "dark-v10",
+    accessToken: API_KEY
+});
 
-    // Create the map object with options
-    var myMap = L.map("map", {
-        center: [36.1699, -115.1398],
-        zoom: 5,
-        layers: [lightmap, earthquakes]
-    });
+var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    maxZoom: 18,
+    id: "streets-v11",
+    accessToken: API_KEY
+});
 
-    // Create a layer control, pass in the baseMaps and overlayMaps. Add the layer control to the map
-    L.control.layers(baseMaps, overlayMaps, {
-        collapsed: false
-    }).addTo(myMap);
+var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    maxZoom: 18,
+    id: "satellite-v9",
+    accessToken: API_KEY
+});
 
+
+// Initialize all of the LayerGroups we'll be using
+var layers = {
+    EARTHQUAKE_L: new L.LayerGroup(),
+    PLATE_L: new L.LayerGroup()
+  };
+
+// Create a baseMaps object to hold the lightmap layer
+var baseMaps = {
+    "Light Map": lightmap,
+    "Dark Map": darkmap,
+    "Street Map": streetmap,
+    "Satellite Map": satellitemap
+};
+
+// Create overlay object to hold our overlay layer
+var overlayMaps = {
+    "Earthquakes": layers.EARTHQUAKE_L,
+    "Tectonic Plates": layers.PLATE_L
+};
+
+// Create the map object with options
+var myMap = L.map("map", {
+    center: [36.1699, -115.1398],
+    zoom: 5,
+    layers: [lightmap, layers.EARTHQUAKE_L]
+});
+
+// Create a layer control, pass in the baseMaps and overlayMaps. Add the layer control to the map
+L.control.layers(baseMaps, overlayMaps, {
+    collapsed: false
+}).addTo(myMap);
+
+
+function earthquake_legend(earthquakes){
     // https://gis.stackexchange.com/questions/133630/adding-leaflet-legend
     var legend = L.control({position: 'bottomright'});
 
         legend.onAdd = function (map) {
-    
+
         var div = L.DomUtil.create('div', 'info legend'),
         labels =[]   
         magnitudes = [0, 1, 2, 3, 4, 5];
-    
+
         for (var i = 0; i < magnitudes.length; i++) {
             div.innerHTML +=
             labels.push(
@@ -151,7 +159,7 @@ function createMap(earthquakes) {
             div.innerHTML = labels.join('<br>');
         return div;
     };
-    
+
     legend.addTo(myMap);
 
 }
